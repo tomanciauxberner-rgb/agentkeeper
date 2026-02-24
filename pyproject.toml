@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "agentkeeper"
+version = "0.1.0"
+description = "Cognitive persistence layer for AI agents — cross-model memory continuity"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.0.0",
+    "anthropic>=0.20.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/tomanciauxberner-rgb/agentkeeper"
+Repository = "https://github.com/tomanciauxberner-rgb/agentkeeper"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
