@@ -65,3 +65,38 @@ class MockAdapter(BaseAdapter):
     def query(self, system_prompt: str, user_message: str) -> str:
         self._last_system_prompt = system_prompt
         return f"Based on my memory: {system_prompt}"
+
+
+class GeminiAdapter(BaseAdapter):
+    def __init__(self, api_key: str, model: str = "gemini-1.5-pro"):
+        import google.generativeai as genai
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel(model)
+
+    def query(self, system_prompt: str, user_message: str) -> str:
+        response = self.model.generate_content(f"{system_prompt}\n\n{user_message}")
+        return response.text
+
+
+class OllamaAdapter(BaseAdapter):
+    def __init__(self, model: str = "llama3", host: str = "http://localhost:11434"):
+        self.model = model
+        self.host = host
+
+    def query(self, system_prompt: str, user_message: str) -> str:
+        import urllib.request, json
+        payload = json.dumps({
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            "stream": False
+        }).encode()
+        req = urllib.request.Request(
+            f"{self.host}/api/chat",
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req) as r:
+            return json.loads(r.read())["message"]["content"]

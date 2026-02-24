@@ -8,7 +8,6 @@ Usage:
     agent = agentkeeper.create(agent_id="my-agent")
     agent.remember("budget: 50k€", critical=True)
     agent.remember("client: Acme Corp", critical=True)
-    agent.remember("meeting notes: discussed timeline")
 
     # Switch provider — memory survives
     response = agent.ask("What is the project budget?", provider="anthropic")
@@ -25,7 +24,7 @@ from dotenv import load_dotenv
 from src.cso.types import CognitiveStateObject, Fact
 from src.cre.engine import CognitiveReconstructionEngine
 from src.storage.sqlite_store import Storage
-from src.adapters.adapters import OpenAIAdapter, AnthropicAdapter, MockAdapter, BaseAdapter
+from src.adapters.adapters import OpenAIAdapter, AnthropicAdapter, MockAdapter, GeminiAdapter, OllamaAdapter, BaseAdapter
 
 load_dotenv(Path(__file__).parent / ".env")
 
@@ -39,6 +38,14 @@ PROVIDERS = {
     "anthropic": lambda: AnthropicAdapter(
         api_key=os.getenv("ANTHROPIC_API_KEY", ""),
         model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5-20250929")
+    ),
+    "gemini": lambda: GeminiAdapter(
+        api_key=os.getenv("GEMINI_API_KEY", ""),
+        model=os.getenv("GEMINI_MODEL", "gemini-1.5-pro")
+    ),
+    "ollama": lambda: OllamaAdapter(
+        model=os.getenv("OLLAMA_MODEL", "llama3"),
+        host=os.getenv("OLLAMA_HOST", "http://localhost:11434")
     ),
     "mock": lambda: MockAdapter(),
 }
